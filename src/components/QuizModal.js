@@ -1,7 +1,10 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const QuizModal = ({ show, onHide, puntaje, totalPreguntas, preguntasYRespuestas }) => {
+  let navigate = useNavigate();
+
   return (
     <Modal show={show} onHide={onHide} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
@@ -21,7 +24,7 @@ const QuizModal = ({ show, onHide, puntaje, totalPreguntas, preguntasYRespuestas
         </ul>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>Cerrar</Button>
+        <Button variant="secondary" onClick={ () => navigate('/niveles')}>Volver a Niveles</Button>
       </Modal.Footer>
     </Modal>
   );

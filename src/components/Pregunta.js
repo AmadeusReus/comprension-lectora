@@ -10,7 +10,7 @@ const Pregunta = ({ pregunta, opciones, respuestaCorrecta, onRespuestaSelecciona
     e.preventDefault();
     const esCorrecta = respuestaSeleccionada === respuestaCorrecta;
     setEsRespuestaCorrecta(esCorrecta);
-    onRespuestaSeleccionada(esCorrecta);
+    onRespuestaSeleccionada(respuestaSeleccionada, esCorrecta); // Modificado para pasar respuestaSeleccionada también
     setMostrarRetroalimentacion(true); // Mostrar retroalimentación después de enviar respuesta
   };
 

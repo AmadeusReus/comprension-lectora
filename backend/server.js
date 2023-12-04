@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const nivelesConTextos = require('./routes/nivelesConTextos');  // Actualizado
 const preguntasRoutes = require('./routes/PreguntasRoutes');
 const opcionesRoutes = require('./routes/OpcionesRoutes');
+const TextoDetalleRoutes = require('./routes/TextoDetalleRoutes');
 
 dotenv.config({ path: './base_datos.env' });
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 app.use('/nivelesConTextos', nivelesConTextos);  // Actualizado
 app.use('/preguntas', preguntasRoutes);
 app.use('/opciones', opcionesRoutes);
+app.use('/textoDetalle', TextoDetalleRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
