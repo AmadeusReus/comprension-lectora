@@ -18,16 +18,15 @@ function ColorSchemesExample() {
             <Nav.Link as={NavLink} to="/" exact>
               Inicio
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/sobre">
-              Sobre
-            </Nav.Link>
-            <Nav.Link as={NavLink} to="/contacto">
-              Contacto
-            </Nav.Link>
             <Nav.Link as={NavLink} to="/niveles">
                 Niveles
             </Nav.Link>
-            {/* Puedes agregar más enlaces de Nav.Link aquí */}
+            <Nav.Link as={NavLink} to="/sobre">
+              Sobre
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/login">
+              Login
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

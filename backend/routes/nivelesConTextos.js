@@ -19,3 +19,5 @@ router.get('/', (req, res) => {
 });
 
 module.exports = router;
+
+//esta ruta la usamos para obtener datos para el componente AdminTextosList.js

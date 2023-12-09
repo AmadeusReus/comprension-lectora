@@ -1,44 +1,49 @@
-// src/components/Pregunta.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Alert } from 'react-bootstrap';
 
-const Pregunta = ({ pregunta, opciones, respuestaCorrecta, onRespuestaSeleccionada }) => {
+const Pregunta = ({ pregunta, opciones, respuestaCorrecta, onRespuestaSeleccionada, resetear }) => {
   const [respuestaSeleccionada, setRespuestaSeleccionada] = useState('');
   const [mostrarRetroalimentacion, setMostrarRetroalimentacion] = useState(false);
   const [esRespuestaCorrecta, setEsRespuestaCorrecta] = useState(false);
+
+  useEffect(() => {
+    // Limpia el estado cuando se resetea la pregunta
+    setRespuestaSeleccionada('');
+    setMostrarRetroalimentacion(false);
+    setEsRespuestaCorrecta(false);
+  }, [resetear]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const esCorrecta = respuestaSeleccionada === respuestaCorrecta;
     setEsRespuestaCorrecta(esCorrecta);
-    onRespuestaSeleccionada(respuestaSeleccionada, esCorrecta); // Modificado para pasar respuestaSeleccionada también
-    setMostrarRetroalimentacion(true); // Mostrar retroalimentación después de enviar respuesta
+    onRespuestaSeleccionada(respuestaSeleccionada, esCorrecta);
+    setMostrarRetroalimentacion(true);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h3>{pregunta}</h3>
-        {opciones.map((opcion, index) => (
-          <label key={index}>
-            <input
-              type="radio"
-              value={opcion}
-              name="respuesta"
-              checked={respuestaSeleccionada === opcion}
-              onChange={(e) => setRespuestaSeleccionada(e.target.value)}
-              disabled={mostrarRetroalimentacion} // Deshabilitar después de enviar
-            />
-            {opcion}
-          </label>
-        ))}
-        <button type="submit" disabled={mostrarRetroalimentacion}>Confirmar respuesta</button>
-      </form>
+    <Form onSubmit={handleSubmit}>
+      <h3>{pregunta}</h3>
+      {opciones.map((opcion, index) => (
+        <Form.Check
+          type="radio"
+          label={opcion}
+          name="respuesta"
+          value={opcion}
+          id={`respuesta-${index}`}
+          checked={respuestaSeleccionada === opcion}
+          onChange={(e) => setRespuestaSeleccionada(e.target.value)}
+          disabled={mostrarRetroalimentacion}
+          key={index}
+        />
+      ))}
+      <Button type="submit" disabled={!respuestaSeleccionada || mostrarRetroalimentacion}>Confirmar respuesta</Button>
       {mostrarRetroalimentacion && (
-        <div className={esRespuestaCorrecta ? 'correcta' : 'incorrecta'}>
+        <Alert variant={esRespuestaCorrecta ? 'success' : 'danger'}>
           {esRespuestaCorrecta ? 'Correcto!' : 'Incorrecto!'}
-        </div>
+        </Alert>
       )}
-    </div>
+    </Form>
   );
 };
 
