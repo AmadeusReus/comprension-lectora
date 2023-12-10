@@ -18,8 +18,8 @@
 --
 -- Table structure for table `evaluacion`
 --
-CREATE Database mydb;
-use mydb;
+
+use ikgwxj5gogo3q7x6;
 
 DROP TABLE IF EXISTS `evaluacion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
