@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, InputGroup, FormControl, Pagination } from 'react-bootstrap';
+import { Table, Button, InputGroup, FormControl, Pagination, Container, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AddTextoModal from './AddTextoModal';
@@ -62,18 +62,36 @@ const TextosList = () => {
     navigate(`/TextoEdit/${id}`);
   };
 
+  const titleStyles = {
+    fontWeight: 'bold', // Letra en negrita
+    color: 'black',   // Color azul 
+    fontSize: '1.2em',  // Tamaño de letra ligeramente más grande
+  };
+  
+  const cellTitleStyles = {
+    fontWeight: 'bold', // Letra en negrita
+    color: '#007bff',   // Color azul (puedes elegir el color que prefieras)
+  };
+
+  const cellDescriptionStyles = {
+    fontStyle: 'italic', // Letra en cursiva
+  };
+
   return (
-    <>
-      <InputGroup className="mb-3">
-        <FormControl
-          placeholder="Buscar textos... 🔎"
-          onChange={handleSearchChange}
-        />
-        <Button variant="outline-secondary" id="button-addon2">
-          Buscar
-        </Button>
-      </InputGroup>
-      <Table striped bordered hover>
+    <Container className="my-5">
+      <Row>
+        <Col>
+          <Card>
+            <Card.Header as="h5" style={titleStyles}>Lista de Textos</Card.Header>
+            <Card.Body>
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Buscar textos...🔎"
+                  onChange={handleSearchChange}
+                />
+                <Button variant="outline-secondary">Buscar</Button>
+              </InputGroup>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Título</th>
@@ -84,8 +102,8 @@ const TextosList = () => {
         <tbody>
           {currentTextos.map((texto) => (
             <tr key={texto.idTexto}>
-              <td onClick={() => handleTitleClick(texto.idTexto)} style={{ cursor: 'pointer' }}>{texto.titulo}</td>
-              <td>{texto.descripcionNivel}</td>
+              <td onClick={() => handleTitleClick(texto.idTexto)} style={{ ...cellTitleStyles, cursor: 'pointer' }}>{texto.titulo}</td>
+              <td style={cellDescriptionStyles}>{texto.descripcionNivel}</td>
               <td>
                 <Button variant="primary" size="sm" onClick={() => handleTitleClick(texto.idTexto)}>Ver</Button>
               </td>
@@ -100,16 +118,22 @@ const TextosList = () => {
           </Pagination.Item>
         ))}
       </Pagination>
-      <div className="d-flex justify-content-center mt-4">
-        <Button variant="success" onClick={() => setShowAddModal(true)}>Crear Nuevo</Button>
-      </div>
+      <div className="d-flex justify-content-end mt-4">
+                <Button variant="success" onClick={() => setShowAddModal(true)}>
+                <span role="img" aria-label="suma">➕</span> Crear Nuevo Texto
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       <AddTextoModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onTextAdded={fetchTextos}
       />
-    </>
+    </Container>
   );
 };
 

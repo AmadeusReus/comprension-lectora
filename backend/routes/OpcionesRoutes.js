@@ -47,10 +47,10 @@ router.put('/:idopciones', (req, res) => {
 });
 
 
-router.delete('/:idPregunta', (req, res) => {
-    const { idPregunta } = req.params;
+router.delete('/:idopciones', (req, res) => {
+    const { idopciones } = req.params;
     
-    db.query('DELETE FROM opciones WHERE idPregunta = ?', [idPregunta], (err, result) => {
+    db.query('DELETE FROM opciones WHERE idopciones = ?', [idopciones], (err, result) => {
         if (err) {
             return res.status(500).json({ error: 'Error al eliminar la opción: ' + err.message });
         }

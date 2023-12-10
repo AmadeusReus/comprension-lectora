@@ -20,7 +20,7 @@ const Login = () => {
       setTimeout(() => {
         setShowModal(false);
         localStorage.setItem('isAdmin', 'true');
-        navigate('/AdminTextList');
+        navigate('/TextoList');
       }, 1500); // Cierra el modal y redirige después de 1.5 segundos
     } else {
       setModalContent('Credenciales incorrectas');

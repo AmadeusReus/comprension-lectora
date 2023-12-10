@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, FormGroup, FormLabel, FormControl, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
-const AddTextoModal = ({ show, onHide }) => {
+const AddTextoModal = ({ show, onHide, onTextAdded }) => {
+
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertModalContent, setAlertModalContent] = useState("");
     const [nuevoTexto, setNuevoTexto] = useState({
         titulo: '',
         contenido: '',
@@ -10,6 +13,7 @@ const AddTextoModal = ({ show, onHide }) => {
         fechaPublicacion: '',
         IDnivel: ''
     });
+    
     const [preguntasNuevas, setPreguntasNuevas] = useState([]);
 
     const handleChangeTexto = (e) => {
@@ -47,25 +51,51 @@ const AddTextoModal = ({ show, onHide }) => {
         setPreguntasNuevas(nuevasPreguntas);
     };
 
+    const handleShowAlertModal = (message) => {
+        setAlertModalContent(message);
+        setShowAlertModal(true);
+    };
+
+    const handleCloseAlertModal = () => {
+        setShowAlertModal(false);
+        if (alertModalContent.includes('éxito')) {
+            onHide();
+            onTextAdded(); // Redirige al usuario a TextosList
+        }
+    };
+
+    const labelStyles = {
+        fontWeight: 'bold',
+        color: '#007bff',
+        fontSize: '1em',
+    };  
+
     const handleSubmit = async () => {
         // Validar que se llenen todos los campos requeridos antes de enviar
         if (!nuevoTexto.titulo || !nuevoTexto.contenido || preguntasNuevas.some(p => p.enunciado === '' || p.opciones.some(o => o.descripcion === ''))) {
-            alert('Por favor, completa todos los campos requeridos antes de guardar.');
+            handleShowAlertModal('✋🧐 Por favor, completa todos los campos requeridos antes de guardar.');
             return;
         }
-
+        if (!nuevoTexto.IDnivel) {
+            handleShowAlertModal('⚠️ Por favor, selecciona un nivel para el texto.');
+            return;
+        }
+        if (preguntasNuevas.length === 0) {
+            handleShowAlertModal('👀 Debes agregar al menos una pregunta.');
+            return;
+        }
         // Validar preguntas y opciones
         for (const pregunta of preguntasNuevas) {
             if (!pregunta.enunciado.trim()) {
-                alert('Cada pregunta debe tener un enunciado.');
+                handleShowAlertModal('😬 Cada pregunta debe tener un enunciado.');
                 return;
             }
             if (pregunta.opciones.length === 0 || pregunta.opciones.some(opcion => opcion.descripcion.trim() === '')) {
-                alert('Cada pregunta debe tener al menos una opción y todas las opciones deben tener descripciones.');
+                handleShowAlertModal('😑 Cada pregunta debe tener al menos una opción y todas las opciones deben tener descripciones.');
                 return;
             }
             if (!pregunta.opciones.some(opcion => opcion.correcta === 1)) {
-                alert('Cada pregunta debe tener al menos una opción correcta, marca la correcta para poder continuar.');
+                handleShowAlertModal('😐 Cada pregunta debe tener al menos una opción correcta, marca la correcta para poder continuar.');
                 return;
             }
         }
@@ -93,30 +123,31 @@ const AddTextoModal = ({ show, onHide }) => {
                 }
             }
 
-            alert('Texto, preguntas y opciones creadas con éxito.');
-            onHide(); // Cierra el modal
+            handleShowAlertModal('Texto, preguntas y opciones creadas con éxito. 👍✅');
+            //onHide(); // Cierra el modal
         } catch (error) {
             console.error('Error:', error);
-            alert('Error al agregar el texto, las preguntas y las opciones. Por favor, revisa la consola para más detalles.');
+            handleShowAlertModal('🤨 Error al agregar el texto, las preguntas y las opciones. Por favor, revisa la consola para más detalles.');
         }
     };
 
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>Agregar Nuevo Texto</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    {/* Campos para el nuevo texto */}
-                    {/* ... */}
-                    <Form.Group className="mb-3">
-                        <Form.Label>Título</Form.Label>
-                        <Form.Control type="text" name="titulo" value={nuevoTexto.titulo} onChange={handleChangeTexto} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Nivel</Form.Label>
-                        <Form.Control
+                    {/* Campo de Título */}
+                    <FormGroup className="mb-3">
+                        <FormLabel style={labelStyles}>Título</FormLabel>
+                        <FormControl type="text" name="titulo" value={nuevoTexto.titulo} onChange={handleChangeTexto} />
+                    </FormGroup>
+                    
+                    {/* Campo de Nivel */}
+                    <FormGroup className="mb-3">
+                        <FormLabel style={labelStyles}>Nivel</FormLabel>
+                        <FormControl
                             as="select"
                             name="IDnivel"
                             value={nuevoTexto.IDnivel}
@@ -126,47 +157,62 @@ const AddTextoModal = ({ show, onHide }) => {
                             <option value="1">Básico</option>
                             <option value="2">Intermedio</option>
                             <option value="3">Avanzado</option>
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Contenido</Form.Label>
-                        <Form.Control as="textarea" rows={15} name="contenido" value={nuevoTexto.contenido} onChange={handleChangeTexto} />
-                    </Form.Group>
-                    {/* Otros campos para el texto como 'autor', 'fechaPublicacion', etc. */}
+                        </FormControl>
+                    </FormGroup>
 
-                    {/* Campos para agregar preguntas y opciones */}
+                    {/* Campo de Contenido */}
+                    <FormGroup className="mb-3">
+                        <FormLabel style={labelStyles}>Contenido</FormLabel>
+                        <FormControl as="textarea" rows={5} name="contenido" value={nuevoTexto.contenido} onChange={handleChangeTexto} />
+                    </FormGroup>
+
+                    {/* Preguntas y Opciones */}
                     {preguntasNuevas.map((pregunta, indexPregunta) => (
-                        <div key={indexPregunta}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Pregunta {indexPregunta + 1}</Form.Label>
-                                <Form.Control type="text" value={pregunta.enunciado} onChange={(e) => handleChangePregunta(indexPregunta, e)} />
-                            </Form.Group>
-                            {pregunta.opciones.map((opcion, indexOpcion) => (
-                                <Form.Group key={indexOpcion} className="mb-3">
-                                    <Form.Label>Opción {indexOpcion + 1}</Form.Label>
-                                    <Form.Control type="text" value={opcion.descripcion} onChange={(e) => handleChangeOpcion(indexPregunta, indexOpcion, e)} />
-                                    <Form.Check 
-                                        type="radio"
-                                        label="Correcta"
-                                        checked={opcion.correcta === 1}
-                                        onChange={() => handleToggleCorrect(indexPregunta, indexOpcion)}
-                                    />
-                                </Form.Group>
-                            ))}
-                            <Button variant="primary" onClick={() => handleAddOption(indexPregunta)}>Agregar Opción</Button>
-                        </div>
+                        <Row key={indexPregunta} className="mb-3">
+                            <Col>
+                                <FormGroup>
+                                    <FormLabel style={labelStyles}>Pregunta {indexPregunta + 1}</FormLabel>
+                                    <FormControl type="text" value={pregunta.enunciado} onChange={(e) => handleChangePregunta(indexPregunta, e)} />
+                                </FormGroup>
+                                {pregunta.opciones.map((opcion, indexOpcion) => (
+                                    <FormGroup key={indexOpcion} className="ms-4">
+                                        <FormLabel style={labelStyles}>Opción {indexOpcion + 1}</FormLabel>
+                                        <FormControl type="text" value={opcion.descripcion} onChange={(e) => handleChangeOpcion(indexPregunta, indexOpcion, e)} />
+                                        <Form.Check 
+                                            type="radio"
+                                            label="Correcta"
+                                            checked={opcion.correcta === 1}
+                                            onChange={() => handleToggleCorrect(indexPregunta, indexOpcion)}
+                                        />
+                                    </FormGroup>
+                                ))}
+                                <Button variant="primary" onClick={() => handleAddOption(indexPregunta)}>Agregar Opción</Button>
+                            </Col>
+                        </Row>
                     ))}
-                    <Button variant="primary" onClick={handleAddQuestion}>Agregar Pregunta</Button>
+                    <Button variant="secondary" onClick={handleAddQuestion}>Agregar Pregunta</Button>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>Cerrar</Button>
                 <Button variant="primary" onClick={handleSubmit}>Guardar Todo</Button>
             </Modal.Footer>
+            {/* Modal de Alerta */}
+            <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Alerta</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{alertModalContent}</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => handleCloseAlertModal()}>
+                  Cerrar
+                </Button>
+              </Modal.Footer>
+            </Modal>
         </Modal>
+
+        
     );
 };
 
 export default AddTextoModal;
-
-

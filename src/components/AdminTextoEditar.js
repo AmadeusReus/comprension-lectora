@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Container, Row, Col, Card } from 'react-bootstrap';
 import EditModal from './EditModal';
 
 const AdminTextoEditar = () => {
     const { textoId } = useParams();
     const navigate = useNavigate();
     const [detalle, setDetalle] = useState({ texto: {}, preguntas: [] });
-    const [showEditModal, setShowEditModal] = useState(false); // Estado para controlar la visibilidad del modal de edición
+    const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    
 
     useEffect(() => {
         axios.get(`http://localhost:3001/textoDetalle/${textoId}`)
@@ -46,21 +47,29 @@ const AdminTextoEditar = () => {
     }
 
     return (
-        <div>
-            <h2>{detalle.texto.titulo}</h2>
-            <p>{detalle.texto.contenido}</p>
-            <Button variant="primary" onClick={handleEdit}>Editar Texto</Button>
-            <Button variant="danger" onClick={handleDelete}>Eliminar Texto</Button>
-            <Button variant="secondary" onClick={() => navigate('/TextoList')}>Volver a Títulos</Button>
+        <Container className="my-5">
+            <Row>
+                <Col>
+                    <Card>
+                        <Card.Header as="h5">{detalle.texto.titulo}</Card.Header>
+                        <Card.Body>
+                            <Card.Text>
+                                {detalle.texto.contenido}
+                            </Card.Text>
+                            <Button variant="primary" onClick={handleEdit}><span role="img" aria-label='eliminar'>✏</span>Editar Texto</Button>{' '}
+                            <Button variant="danger" onClick={handleDelete}><span role="img" aria-label='eliminar'>➖</span>Eliminar Texto</Button>{' '}
+                            <Button variant="secondary" onClick={() => navigate('/TextoList')}>Volver a Títulos<span role="img" aria-label='volver'>↩</span></Button>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
 
-             {/* Modal para editar el texto */}
             <EditModal
                 show={showEditModal}
                 onHide={() => setShowEditModal(false)}
                 detalle={detalle}
             />
 
-            {/* Modal de Confirmación de Eliminación */}
             <Modal show={showDeleteConfirmModal} onHide={() => setShowDeleteConfirmModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Eliminación</Modal.Title>
@@ -71,14 +80,8 @@ const AdminTextoEditar = () => {
                     <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </Container>
     );
 };
 
 export default AdminTextoEditar;
-
-
-
-
-
-
