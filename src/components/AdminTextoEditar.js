@@ -10,10 +10,13 @@ const AdminTextoEditar = () => {
     const [detalle, setDetalle] = useState({ texto: {}, preguntas: [] });
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const apiBaseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3001'
+    : 'https://warm-depths-43892-d980a21423f1.herokuapp.com';
     
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/textoDetalle/${textoId}`)
+        axios.get(`${apiBaseUrl}/textoDetalle/${textoId}`)
             .then(respuesta => {
                 setDetalle(respuesta.data);
             })
@@ -31,7 +34,7 @@ const AdminTextoEditar = () => {
     };
 
     const confirmDelete = () => {
-        axios.delete(`http://localhost:3001/textoDetalle/${textoId}`)
+        axios.delete(`${apiBaseUrl}/textoDetalle/${textoId}`)
             .then(() => {
                 alert('Texto eliminado con éxito.');
                 navigate('/TextoList');

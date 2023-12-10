@@ -19,7 +19,6 @@
 -- Table structure for table `evaluacion`
 --
 
-use ikgwxj5gogo3q7x6;
 
 DROP TABLE IF EXISTS `evaluacion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

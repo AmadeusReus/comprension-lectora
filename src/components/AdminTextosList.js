@@ -13,22 +13,26 @@ const TextosList = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const navigate = useNavigate();
 
-  const fetchTextos = () => {
-    axios.get('http://localhost:3001/nivelesConTextos')
-      .then(response => {
-        setTextos(response.data);
-      })
-      .catch(error => {
-        console.error('Error al obtener los textos:', error);
-      });
-  }
+  const apiBaseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3001'
+    : 'https://warm-depths-43892-d980a21423f1.herokuapp.com';
+
+    const fetchTextos = () => {
+      axios.get(`${apiBaseUrl}/nivelesConTextos`)
+        .then(response => {
+          setTextos(response.data);
+        })
+        .catch(error => {
+          console.error('Error al obtener los textos:', error);
+        });
+    }
 
   useEffect(() => {
     fetchTextos();
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/nivelesConTextos')
+    axios.get(`${apiBaseUrl}/nivelesConTextos`)
       .then(response => {
         setTextos(response.data);
       })

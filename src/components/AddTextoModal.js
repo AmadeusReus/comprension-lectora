@@ -6,6 +6,9 @@ const AddTextoModal = ({ show, onHide, onTextAdded }) => {
 
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [alertModalContent, setAlertModalContent] = useState("");
+    const apiBaseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3001'
+    : 'https://warm-depths-43892-d980a21423f1.herokuapp.com';
     const [nuevoTexto, setNuevoTexto] = useState({
         titulo: '',
         contenido: '',
@@ -102,12 +105,12 @@ const AddTextoModal = ({ show, onHide, onTextAdded }) => {
 
         try {
             // Primero, enviar el nuevo texto al servidor
-            const responseTexto = await axios.post('http://localhost:3001/textoDetalle', nuevoTexto);
+            const responseTexto = await axios.post('${apiBaseUrl}/textoDetalle', nuevoTexto);
             const idTexto = responseTexto.data.idTexto;
 
             // Luego, para cada pregunta, enviarla al servidor y crear las opciones asociadas
             for (const pregunta of preguntasNuevas) {
-                const responsePregunta = await axios.post(`http://localhost:3001/preguntas/${idTexto}`, {
+                const responsePregunta = await axios.post(`${apiBaseUrl}/preguntas/${idTexto}`, {
                     enunciado: pregunta.enunciado,
                     IDtexto: idTexto 
                 });
@@ -115,7 +118,7 @@ const AddTextoModal = ({ show, onHide, onTextAdded }) => {
 
                 // Para cada opción en la pregunta actual, enviarla al servidor
                 for (const opcion of pregunta.opciones) {
-                    await axios.post(`http://localhost:3001/opciones/${idPregunta}`, {
+                    await axios.post(`${apiBaseUrl}/opciones/${idPregunta}`, {
                         descripcion: opcion.descripcion,
                         correcta: opcion.correcta,
                         IDpregunta: idPregunta 
