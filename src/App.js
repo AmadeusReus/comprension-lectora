@@ -6,7 +6,7 @@ import TextoDetalle from './components/TextoDetalle.js';
 import TextosList from './components/AdminTextosList.js';
 import AdminTextoEditar from './components/AdminTextoEditar.js';
 // import AddTextoPreguntas from './components/AddTextoPreguntas.js';
-
+//pagina terminada
 import Inicio from './containers/Inicio';
 import Sobre from './containers/Sobre';
 import Login from './containers/Login.js';
